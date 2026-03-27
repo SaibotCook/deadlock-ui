@@ -36,3 +36,7 @@ export function shopTabEdgeOverlay(): string {
 export function soulIcon(): string {
   return cdn('icons/icon_soul.svg');
 }
+
+export function fontUrl(name: string): string {
+  return cdn(`fonts/${name}.otf`);
+}
