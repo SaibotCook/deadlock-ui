@@ -17,6 +17,10 @@
   "scripts": {
     "build": "tsc -p tsconfig.json"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/deadlockprobr/deadlock-ui"
+  },
   "license": "MIT",
   "publishConfig": {
     "access": "public"
