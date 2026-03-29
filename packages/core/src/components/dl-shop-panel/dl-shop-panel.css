@@ -260,6 +260,8 @@
 }
 
 .item-wrapper.highlighted {
+    position: relative;
+    z-index: 2;
     opacity: 1;
 }
 
