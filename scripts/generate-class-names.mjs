@@ -6,7 +6,9 @@
  * Usage: node scripts/generate-class-names.mjs
  */
 
-const API_URL = 'https://assets.deadlock-api.com/v2/items?language=english';
+import repoConfig from '../repo.config.mjs';
+
+const API_URL = repoConfig.apiItemsUrl;
 const TYPE_OUTPUT = new URL('../packages/core/src/types/item-class-name.ts', import.meta.url);
 const JSON_OUTPUT = new URL('../docs/src/data/items.json', import.meta.url);
 

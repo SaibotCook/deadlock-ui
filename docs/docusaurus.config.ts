@@ -1,9 +1,10 @@
 import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+import repoConfig from '../repo.config.mjs';
 
 const config: Config = {
-  title: 'Deadlock UI',
+  title: repoConfig.projectName,
   tagline: 'Open-source Web Components for Deadlock game items',
   favicon: 'img/favicon.ico',
 
@@ -11,7 +12,7 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'https://deadlock-ui.dev',
+  url: repoConfig.docsUrl,
   baseUrl: '/',
 
   onBrokenLinks: 'throw',
@@ -59,7 +60,7 @@ const config: Config = {
       respectPrefersColorScheme: false,
     },
     navbar: {
-      title: 'Deadlock UI',
+      title: repoConfig.projectName,
       items: [
         {
           type: 'docSidebar',
@@ -78,7 +79,7 @@ const config: Config = {
           position: 'left',
         },
         {
-          href: 'https://github.com/user/deadlock-ui',
+          href: repoConfig.githubUrl,
           label: 'GitHub',
           position: 'right',
         },
@@ -102,7 +103,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Deadlock UI. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} ${repoConfig.projectName}. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.dracula,
