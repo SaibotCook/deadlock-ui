@@ -98,6 +98,7 @@
     clip-path: polygon(100% 0, 0 0, 100% 100%);
     opacity: 0;
     transition: opacity 0.15s ease;
+    user-select: none;
 }
 
 .mod-box:hover .tier-badge {
@@ -122,6 +123,11 @@
     font-weight: 800;
     color: #1a1510;
     z-index: 10;
+    width: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.5px;
 }
 
 /* Active / Imbue tags */
