@@ -3,6 +3,7 @@ import { Item, ItemSlotType } from '../../types';
 import { fetchItems, fetchGenericData } from '../../api/client';
 import { configState, onConfigChange } from '../../store/config-store';
 import { shopBackground, shopTabShape, shopTabIcon, shopTabEdgeOverlay, soulIcon } from '../../utils/assets';
+import { ComponentItemInfo } from '../dl-item-tooltip/dl-item-tooltip';
 
 const CATEGORIES: { label: string; slot: ItemSlotType; color: string }[] = [
   { label: 'Weapon', slot: 'weapon', color: '#e4b20c' },
@@ -36,10 +37,13 @@ export class DlShopPanel {
   @State() private _activeTab: ItemSlotType = 'weapon';
   @State() private _tierPrices: number[] = [];
   @State() private _highlightedItems: Set<string> | null = null;
+  private _highlightSource: string | null = null;
 
   private _unsubLanguage?: () => void;
   /** Maps class_name → set of all related class_names in the upgrade chain */
   private _upgradeChains = new Map<string, Set<string>>();
+  /** Maps class_name → resolved component item info for tooltips */
+  private _componentItemsMap = new Map<string, ComponentItemInfo[]>();
 
   @Watch('activeTab')
   onActiveTabChange(value: string) {
@@ -135,20 +139,41 @@ export class DlShopPanel {
     }
 
     this._upgradeChains = chains;
+
+    // Build component items map for tooltips
+    const byClassName = new Map<string, Item>(this._items.map(i => [i.class_name, i]));
+    const componentMap = new Map<string, ComponentItemInfo[]>();
+    for (const item of this._items) {
+      if (item.component_items?.length) {
+        const resolved: ComponentItemInfo[] = [];
+        for (const cn of item.component_items) {
+          const comp = byClassName.get(cn);
+          if (!comp) continue;
+          resolved.push({
+            name: comp.name,
+            image: comp.shop_image_webp || comp.shop_image || comp.image_webp || comp.image || undefined,
+          });
+        }
+        if (resolved.length > 0) {
+          componentMap.set(item.class_name, resolved);
+        }
+      }
+    }
+    this._componentItemsMap = componentMap;
   }
 
-  private handleItemMouseEnter = (className: string) => {
+  private handleTooltipOpen = (e: CustomEvent<string>) => {
     if (this.disableHighlight) return;
+    const className = e.detail;
+    this._highlightSource = className;
     const chain = this._upgradeChains.get(className);
-    if (chain && chain.size > 1) {
-      this._highlightedItems = chain;
-    }
+    this._highlightedItems = chain ?? new Set([className]);
   };
 
-  private handleItemMouseLeave = () => {
-    if (this._highlightedItems) {
-      this._highlightedItems = null;
-    }
+  private handleTooltipClose = (e: CustomEvent<string>) => {
+    if (e.detail !== this._highlightSource) return;
+    this._highlightedItems = null;
+    this._highlightSource = null;
   };
 
   private async loadGenericData() {
@@ -231,10 +256,14 @@ export class DlShopPanel {
                             'dimmed': isHighlighting && !isRelated,
                             'highlighted': isRelated,
                           }}
-                          onMouseEnter={() => this.handleItemMouseEnter(item.class_name)}
-                          onMouseLeave={this.handleItemMouseLeave}
                         >
-                          <dl-item-card itemData={item} hoverEffect={this.hoverEffect}></dl-item-card>
+                          <dl-item-card
+                            itemData={item}
+                            hoverEffect={this.hoverEffect}
+                            componentItemsData={this._componentItemsMap.get(item.class_name)}
+                            onTooltipOpen={this.handleTooltipOpen}
+                            onTooltipClose={this.handleTooltipClose}
+                          ></dl-item-card>
                         </div>
                       );
                     })}

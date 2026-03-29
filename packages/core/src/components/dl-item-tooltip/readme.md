@@ -7,9 +7,10 @@
 
 ## Properties
 
-| Property   | Attribute | Description                          | Type                | Default     |
-| ---------- | --------- | ------------------------------------ | ------------------- | ----------- |
-| `itemData` | --        | Item data to display in the tooltip. | `Item \| undefined` | `undefined` |
+| Property             | Attribute | Description                                                       | Type                               | Default     |
+| -------------------- | --------- | ----------------------------------------------------------------- | ---------------------------------- | ----------- |
+| `componentItemsData` | --        | Resolved component items to display at the bottom of the tooltip. | `ComponentItemInfo[] \| undefined` | `undefined` |
+| `itemData`           | --        | Item data to display in the tooltip.                              | `Item \| undefined`                | `undefined` |
 
 
 ## Dependencies

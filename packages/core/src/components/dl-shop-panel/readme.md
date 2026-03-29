@@ -7,10 +7,11 @@
 
 ## Properties
 
-| Property      | Attribute      | Description                                                                   | Type                                 | Default    |
-| ------------- | -------------- | ----------------------------------------------------------------------------- | ------------------------------------ | ---------- |
-| `activeTab`   | `active-tab`   | The tab to display initially. One of `"weapon"`, `"vitality"`, or `"spirit"`. | `"spirit" \| "vitality" \| "weapon"` | `'weapon'` |
-| `hoverEffect` | `hover-effect` | Hover effect applied to each item card. One of `"none"` or `"scale"`.         | `"none" \| "scale"`                  | `'scale'`  |
+| Property           | Attribute           | Description                                                                    | Type                                 | Default    |
+| ------------------ | ------------------- | ------------------------------------------------------------------------------ | ------------------------------------ | ---------- |
+| `activeTab`        | `active-tab`        | The tab to display initially. One of `"weapon"`, `"vitality"`, or `"spirit"`.  | `"spirit" \| "vitality" \| "weapon"` | `'weapon'` |
+| `disableHighlight` | `disable-highlight` | When `true`, disables the highlight effect that dims unrelated items on hover. | `boolean`                            | `false`    |
+| `hoverEffect`      | `hover-effect`      | Hover effect applied to each item card. One of `"none"` or `"scale"`.          | `"none" \| "scale"`                  | `'scale'`  |
 
 
 ## Dependencies

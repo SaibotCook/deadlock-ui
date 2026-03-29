@@ -15,7 +15,7 @@ const { state, onChange } = createStore<ConfigState>({
   tooltipTrigger: 'hover',
   tooltipPlacement: 'auto',
   tooltipFollowCursor: false,
-  tooltipDelay: 150,
+  tooltipDelay: 100,
   showTierBadge: true,
 });
 

@@ -27,7 +27,7 @@ function Playground(): React.JSX.Element {
   const [tooltipTrigger, setTooltipTrigger] = useState('hover');
   const [tooltipPlacement, setTooltipPlacement] = useState('auto');
   const [tooltipFollowCursor, setTooltipFollowCursor] = useState(false);
-  const [tooltipDelay, setTooltipDelay] = useState(150);
+  const [tooltipDelay, setTooltipDelay] = useState(100);
   const [showTierBadge, setShowTierBadge] = useState(false);
   const [activeTab, setActiveTab] = useState('weapon');
   const [hoverEffect, setHoverEffect] = useState('scale');

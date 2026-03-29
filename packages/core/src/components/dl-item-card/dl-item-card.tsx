@@ -1,7 +1,8 @@
-import { Component, Prop, State, Watch, Element, h } from '@stencil/core';
+import { Component, Prop, State, Watch, Element, Event, EventEmitter, h } from '@stencil/core';
 import { computePosition, flip, shift, offset, autoUpdate, Placement, VirtualElement } from '@floating-ui/dom';
 import { Item, ItemClassName } from '../../types';
-import { fetchItem } from '../../api/client';
+import { fetchItem, fetchItems } from '../../api/client';
+import { ComponentItemInfo } from '../dl-item-tooltip/dl-item-tooltip';
 import { configState, onConfigChange } from '../../store/config-store';
 import { cardBackground } from '../../utils/assets';
 import { injectFonts } from '../../utils/fonts';
@@ -29,7 +30,17 @@ export class DlItemCard {
   /** Show the tier badge on hover. When not set, falls back to the global provider value. */
   @Prop({ attribute: 'show-tier-badge' }) showTierBadge?: boolean;
 
+  /** Resolved component items data. When provided, skips automatic resolution. */
+  @Prop() componentItemsData?: ComponentItemInfo[];
+
+  /** Emitted when the tooltip opens. Detail contains the item's `class_name`. */
+  @Event({ eventName: 'tooltipOpen' }) tooltipOpen!: EventEmitter<string>;
+
+  /** Emitted when the tooltip closes. Detail contains the item's `class_name`. */
+  @Event({ eventName: 'tooltipClose' }) tooltipClose!: EventEmitter<string>;
+
   @State() private _item?: Item;
+  @State() private _componentItems?: ComponentItemInfo[];
   @State() private _loading = false;
   @State() private _error?: string;
   @State() private _open = false;
@@ -103,6 +114,8 @@ export class DlItemCard {
     injectFonts();
     if (this.itemKey && !this.itemData) {
       this.fetchItemData();
+    } else if (this.itemData) {
+      this.resolveComponentItems();
     }
     this._unsubLanguage = onConfigChange('language', () => {
       if (this.itemKey && !this.itemData) {
@@ -133,10 +146,33 @@ export class DlItemCard {
     this._error = undefined;
     try {
       this._item = await fetchItem(key, configState.language);
+      this.resolveComponentItems();
     } catch (e) {
       this._error = e instanceof Error ? e.message : 'Failed to load item';
     } finally {
       this._loading = false;
+    }
+  }
+
+  private async resolveComponentItems() {
+    const item = this.item;
+    if (!item?.component_items?.length || this.componentItemsData) return;
+
+    try {
+      const allItems = await fetchItems(configState.language);
+      const byClassName = new Map<string, Item>(allItems.map(i => [i.class_name, i]));
+      const resolved: ComponentItemInfo[] = [];
+      for (const cn of item.component_items) {
+        const comp = byClassName.get(cn);
+        if (!comp) continue;
+        resolved.push({
+          name: comp.name,
+          image: comp.shop_image_webp || comp.shop_image || comp.image_webp || comp.image || undefined,
+        });
+      }
+      this._componentItems = resolved;
+    } catch {
+      // silently fail
     }
   }
 
@@ -188,11 +224,13 @@ export class DlItemCard {
 
   private showFollowCursorMode() {
     this._open = true;
+    this.emitTooltipOpen();
     this.updatePositionFromMouse();
   }
 
   private showAnchoredMode() {
     this._open = true;
+    this.emitTooltipOpen();
 
     const card = this.cardEl;
     const floating = this.floatingEl;
@@ -203,6 +241,7 @@ export class DlItemCard {
   }
 
   private hideTooltip() {
+    const wasOpen = this._open;
     this._open = false;
     clearTimeout(this._hoverTimeout);
     if (this._rafId != null) {
@@ -211,6 +250,16 @@ export class DlItemCard {
     }
     this._cleanupAutoUpdate?.();
     this._cleanupAutoUpdate = undefined;
+    if (wasOpen) {
+      this.tooltipClose.emit(this.item?.class_name);
+    }
+  }
+
+  private emitTooltipOpen() {
+    const item = this.item;
+    if (item) {
+      this.tooltipOpen.emit(item.class_name);
+    }
   }
 
   private handleMouseEnter = (e: MouseEvent) => {
@@ -332,6 +381,7 @@ export class DlItemCard {
         <dl-item-tooltip
           class={{ 'tooltip-wrapper': true, 'open': this._open }}
           itemData={item}
+          componentItemsData={this.componentItemsData ?? this._componentItems}
           onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}
         ></dl-item-tooltip>

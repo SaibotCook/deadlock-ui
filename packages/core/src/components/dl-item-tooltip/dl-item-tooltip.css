@@ -317,3 +317,38 @@ svg {
   vertical-align: middle;
   width: 20px;
 }
+
+/* ─── Component items ─── */
+.component-items-section {
+  padding: 10px 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.component-items-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(200, 200, 210, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.component-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.component-item-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.component-item-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dl-text-primary);
+}

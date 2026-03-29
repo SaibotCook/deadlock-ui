@@ -21,7 +21,7 @@ export class DlProvider {
   @Prop({ attribute: 'tooltip-follow-cursor' }) tooltipFollowCursor: boolean = false;
 
   /** Delay in milliseconds before showing the tooltip on hover. */
-  @Prop({ attribute: 'tooltip-delay', reflect: true }) tooltipDelay: number = 150;
+  @Prop({ attribute: 'tooltip-delay', reflect: true }) tooltipDelay: number = 100;
 
   /** Show tier badge on item cards globally. Individual cards can override this. */
   @Prop({ attribute: 'show-tier-badge' }) showTierBadge: boolean = true;

@@ -34,6 +34,14 @@ Displays a single item card with tooltip on hover or click.
 | `item-id` | `number` | — | Item ID (alternative to `class-name`) |
 | `hover-effect` | `"none"` \| `"scale"` | `"none"` | Hover effect on the card |
 | `show-tier-badge` | `boolean` | — | Override the global `show-tier-badge` for this card |
+| `component-items-data` | `ComponentItemInfo[]` | — | Pre-resolved component items to display in the tooltip. When omitted, resolved automatically |
+
+## Events
+
+| Event | Detail | Description |
+|---|---|---|
+| `tooltipOpen` | `string` | Emitted when the tooltip opens. Detail is the item's `class_name` |
+| `tooltipClose` | `string` | Emitted when the tooltip closes. Detail is the item's `class_name` |
 
 ## Hover Effect
 

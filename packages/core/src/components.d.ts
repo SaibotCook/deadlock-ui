@@ -6,9 +6,17 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { Item, ItemClassName, ItemSlotType, ItemTier, Language, TooltipPlacement, TooltipTrigger } from "./types";
+import { ComponentItemInfo } from "./components/dl-item-tooltip/dl-item-tooltip";
+import { ComponentItemInfo as ComponentItemInfo1 } from "./components/dl-item-tooltip/dl-item-tooltip";
 export { Item, ItemClassName, ItemSlotType, ItemTier, Language, TooltipPlacement, TooltipTrigger } from "./types";
+export { ComponentItemInfo } from "./components/dl-item-tooltip/dl-item-tooltip";
+export { ComponentItemInfo as ComponentItemInfo1 } from "./components/dl-item-tooltip/dl-item-tooltip";
 export namespace Components {
     interface DlItemCard {
+        /**
+          * Resolved component items data. When provided, skips automatic resolution.
+         */
+        "componentItemsData"?: ComponentItemInfo[];
         /**
           * Hover effect on the card. `"none"` does nothing, `"scale"` enlarges on hover.
           * @default 'none'
@@ -48,6 +56,10 @@ export namespace Components {
     }
     interface DlItemTooltip {
         /**
+          * Resolved component items to display at the bottom of the tooltip.
+         */
+        "componentItemsData"?: ComponentItemInfo1[];
+        /**
           * Item data to display in the tooltip.
          */
         "itemData"?: Item;
@@ -65,7 +77,7 @@ export namespace Components {
         "showTierBadge": boolean;
         /**
           * Delay in milliseconds before showing the tooltip on hover.
-          * @default 150
+          * @default 100
          */
         "tooltipDelay": number;
         /**
@@ -102,8 +114,24 @@ export namespace Components {
         "hoverEffect": 'none' | 'scale';
     }
 }
+export interface DlItemCardCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDlItemCardElement;
+}
 declare global {
+    interface HTMLDlItemCardElementEventMap {
+        "tooltipOpen": string;
+        "tooltipClose": string;
+    }
     interface HTMLDlItemCardElement extends Components.DlItemCard, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDlItemCardElementEventMap>(type: K, listener: (this: HTMLDlItemCardElement, ev: DlItemCardCustomEvent<HTMLDlItemCardElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDlItemCardElementEventMap>(type: K, listener: (this: HTMLDlItemCardElement, ev: DlItemCardCustomEvent<HTMLDlItemCardElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLDlItemCardElement: {
         prototype: HTMLDlItemCardElement;
@@ -144,6 +172,10 @@ declare global {
 declare namespace LocalJSX {
     interface DlItemCard {
         /**
+          * Resolved component items data. When provided, skips automatic resolution.
+         */
+        "componentItemsData"?: ComponentItemInfo[];
+        /**
           * Hover effect on the card. `"none"` does nothing, `"scale"` enlarges on hover.
           * @default 'none'
          */
@@ -160,6 +192,14 @@ declare namespace LocalJSX {
           * Item numeric ID. Alternative to `class-name`.
          */
         "itemId"?: number;
+        /**
+          * Emitted when the tooltip closes. Detail contains the item's `class_name`.
+         */
+        "onTooltipClose"?: (event: DlItemCardCustomEvent<string>) => void;
+        /**
+          * Emitted when the tooltip opens. Detail contains the item's `class_name`.
+         */
+        "onTooltipOpen"?: (event: DlItemCardCustomEvent<string>) => void;
         /**
           * Show the tier badge on hover. When not set, falls back to the global provider value.
          */
@@ -182,6 +222,10 @@ declare namespace LocalJSX {
     }
     interface DlItemTooltip {
         /**
+          * Resolved component items to display at the bottom of the tooltip.
+         */
+        "componentItemsData"?: ComponentItemInfo1[];
+        /**
           * Item data to display in the tooltip.
          */
         "itemData"?: Item;
@@ -199,7 +243,7 @@ declare namespace LocalJSX {
         "showTierBadge"?: boolean;
         /**
           * Delay in milliseconds before showing the tooltip on hover.
-          * @default 150
+          * @default 100
          */
         "tooltipDelay"?: number;
         /**
