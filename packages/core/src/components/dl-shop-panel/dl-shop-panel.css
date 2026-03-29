@@ -17,7 +17,7 @@
     border-radius: 6px;
     background: var(--dl-bg-primary);
     overflow: hidden;
-    min-width: 1080px;
+    width: 1080px;
     margin: 0 auto;
 }
 
