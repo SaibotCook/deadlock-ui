@@ -7,11 +7,12 @@
 
 ## Properties
 
-| Property             | Attribute | Description                                                       | Type                               | Default     |
-| -------------------- | --------- | ----------------------------------------------------------------- | ---------------------------------- | ----------- |
-| `componentItemsData` | --        | Resolved component items to display at the bottom of the tooltip. | `ComponentItemInfo[] \| undefined` | `undefined` |
-| `itemData`           | --        | Item data to display in the tooltip.                              | `Item \| undefined`                | `undefined` |
-| `parentItemsData`    | --        | Resolved parent items (items this item is a component of).        | `ComponentItemInfo[] \| undefined` | `undefined` |
+| Property             | Attribute       | Description                                                       | Type                               | Default     |
+| -------------------- | --------------- | ----------------------------------------------------------------- | ---------------------------------- | ----------- |
+| `componentItemsData` | --              | Resolved component items to display at the bottom of the tooltip. | `ComponentItemInfo[] \| undefined` | `undefined` |
+| `itemData`           | --              | Item data to display in the tooltip.                              | `Item \| undefined`                | `undefined` |
+| `nameOverride`       | `name-override` | Override the item name displayed in the tooltip header.           | `string \| undefined`              | `undefined` |
+| `parentItemsData`    | --              | Resolved parent items (items this item is a component of).        | `ComponentItemInfo[] \| undefined` | `undefined` |
 
 
 ## Dependencies
