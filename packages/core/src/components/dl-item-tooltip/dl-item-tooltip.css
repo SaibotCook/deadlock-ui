@@ -132,11 +132,22 @@
   font-weight: 600;
 }
 
+/* ─── Stats block (important stats + regular props) ─── */
+.stats-block {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  margin: 10px 0;
+  padding: 0;
+}
+
+.stats-block-props {
+  padding: 6px 10px 8px;
+}
+
 /* ─── Important stat boxes ─── */
 .important-stats-wrapper {
   display: flex;
   gap: 8px;
-  margin: 10px 0;
 }
 
 .important-stat-box {

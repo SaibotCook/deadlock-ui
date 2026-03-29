@@ -75,19 +75,27 @@ export class DlItemTooltip {
       ].filter(k => !importantKeys.has(k));
       const elevatedSet = new Set(attr.elevated_properties ?? []);
       const importantList = attr.important_properties ?? [];
+      const hasImportant = importantList.length > 0;
 
       return [
         attr.loc_string && (
           <div class="mod-info-label" innerHTML={attr.loc_string}></div>
         ),
 
-        importantList.length > 0 && (
-          <div class={{ 'important-stats-wrapper': true, [`count-${importantList.length}`]: true }}>
-            {importantList.map(k => this.renderImportantProp(k))}
+        hasImportant ? (
+          <div class="stats-block">
+            <div class={{ 'important-stats-wrapper': true, [`count-${importantList.length}`]: true }}>
+              {importantList.map(k => this.renderImportantProp(k))}
+            </div>
+            {regularProps.length > 0 && (
+              <div class="stats-block-props">
+                {regularProps.map(propKey => this.renderProperty(propKey, elevatedSet.has(propKey)))}
+              </div>
+            )}
           </div>
+        ) : (
+          regularProps.map(propKey => this.renderProperty(propKey, elevatedSet.has(propKey)))
         ),
-
-        ...regularProps.map(propKey => this.renderProperty(propKey, elevatedSet.has(propKey))),
       ];
     });
   }
