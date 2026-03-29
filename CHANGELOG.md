@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/deadlockprobr/deadlock-ui/compare/deadlock-ui-v1.0.2...deadlock-ui-v1.0.3) (2026-03-29)
+
+
+### Bug Fixes
+
+* **vue:** add .js extensions to ESM imports for Node.js resolution ([9d6652c](https://github.com/deadlockprobr/deadlock-ui/commit/9d6652cd4ff468892f0b13c1a3bd1dbc8620fd98))
+
 ## [1.0.2](https://github.com/deadlockprobr/deadlock-ui/compare/deadlock-ui-v1.0.1...deadlock-ui-v1.0.2) (2026-03-29)
 
 
