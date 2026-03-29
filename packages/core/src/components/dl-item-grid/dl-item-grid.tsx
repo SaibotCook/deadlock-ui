@@ -55,7 +55,7 @@ export class DlItemGrid {
       if (this.shopableOnly) items = items.filter(i => i.shopable);
       if (this.tier) items = items.filter(i => i.item_tier === this.tier);
 
-      items.sort((a, b) => (a.item_tier ?? 0) - (b.item_tier ?? 0) || (a.cost ?? 0) - (b.cost ?? 0));
+      items.sort((a, b) => (a.item_tier ?? 0) - (b.item_tier ?? 0) || a.name.localeCompare(b.name));
       this._items = items;
     } catch {
       this._items = [];

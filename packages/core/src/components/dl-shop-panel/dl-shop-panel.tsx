@@ -62,7 +62,7 @@ export class DlShopPanel {
       const items = await fetchItems(language);
       this._items = items
         .filter(i => i.type === 'upgrade' && i.shopable && !i.disabled)
-        .sort((a, b) => a.class_name.localeCompare(b.class_name));
+        .sort((a, b) => a.name.localeCompare(b.name));
     } catch {
       this._items = [];
     } finally {
