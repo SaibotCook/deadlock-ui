@@ -35,6 +35,10 @@ export namespace Components {
          */
         "itemId"?: number;
         /**
+          * Resolved parent items (items this item is a component of).
+         */
+        "parentItemsData"?: ComponentItemInfo[];
+        /**
           * Show the tier badge on hover. When not set, falls back to the global provider value.
          */
         "showTierBadge"?: boolean;
@@ -63,6 +67,10 @@ export namespace Components {
           * Item data to display in the tooltip.
          */
         "itemData"?: Item;
+        /**
+          * Resolved parent items (items this item is a component of).
+         */
+        "parentItemsData"?: ComponentItemInfo1[];
     }
     interface DlProvider {
         /**
@@ -201,6 +209,10 @@ declare namespace LocalJSX {
          */
         "onTooltipOpen"?: (event: DlItemCardCustomEvent<string>) => void;
         /**
+          * Resolved parent items (items this item is a component of).
+         */
+        "parentItemsData"?: ComponentItemInfo[];
+        /**
           * Show the tier badge on hover. When not set, falls back to the global provider value.
          */
         "showTierBadge"?: boolean;
@@ -229,6 +241,10 @@ declare namespace LocalJSX {
           * Item data to display in the tooltip.
          */
         "itemData"?: Item;
+        /**
+          * Resolved parent items (items this item is a component of).
+         */
+        "parentItemsData"?: ComponentItemInfo1[];
     }
     interface DlProvider {
         /**

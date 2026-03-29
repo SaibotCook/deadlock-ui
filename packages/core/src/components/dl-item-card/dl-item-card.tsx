@@ -33,6 +33,9 @@ export class DlItemCard {
   /** Resolved component items data. When provided, skips automatic resolution. */
   @Prop() componentItemsData?: ComponentItemInfo[];
 
+  /** Resolved parent items (items this item is a component of). */
+  @Prop() parentItemsData?: ComponentItemInfo[];
+
   /** Emitted when the tooltip opens. Detail contains the item's `class_name`. */
   @Event({ eventName: 'tooltipOpen' }) tooltipOpen!: EventEmitter<string>;
 
@@ -382,6 +385,7 @@ export class DlItemCard {
           class={{ 'tooltip-wrapper': true, 'open': this._open }}
           itemData={item}
           componentItemsData={this.componentItemsData ?? this._componentItems}
+          parentItemsData={this.parentItemsData}
           onMouseEnter={this.handleMouseEnter}
           onMouseLeave={this.handleMouseLeave}
         ></dl-item-tooltip>

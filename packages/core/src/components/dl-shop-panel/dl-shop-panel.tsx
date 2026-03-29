@@ -44,6 +44,8 @@ export class DlShopPanel {
   private _upgradeChains = new Map<string, Set<string>>();
   /** Maps class_name → resolved component item info for tooltips */
   private _componentItemsMap = new Map<string, ComponentItemInfo[]>();
+  /** Maps class_name → items that use this item as a component */
+  private _parentItemsMap = new Map<string, ComponentItemInfo[]>();
 
   @Watch('activeTab')
   onActiveTabChange(value: string) {
@@ -160,6 +162,23 @@ export class DlShopPanel {
       }
     }
     this._componentItemsMap = componentMap;
+
+    // Build parent items map: for each component, list the items that use it
+    const parentItemsMap = new Map<string, ComponentItemInfo[]>();
+    for (const item of this._items) {
+      if (item.component_items?.length) {
+        for (const cn of item.component_items) {
+          if (!byClassName.has(cn)) continue;
+          const list = parentItemsMap.get(cn) ?? [];
+          list.push({
+            name: item.name,
+            image: item.shop_image_webp || item.shop_image || item.image_webp || item.image || undefined,
+          });
+          parentItemsMap.set(cn, list);
+        }
+      }
+    }
+    this._parentItemsMap = parentItemsMap;
   }
 
   private handleTooltipOpen = (e: CustomEvent<string>) => {
@@ -261,6 +280,7 @@ export class DlShopPanel {
                             itemData={item}
                             hoverEffect={this.hoverEffect}
                             componentItemsData={this._componentItemsMap.get(item.class_name)}
+                            parentItemsData={this._parentItemsMap.get(item.class_name)}
                             onTooltipOpen={this.handleTooltipOpen}
                             onTooltipClose={this.handleTooltipClose}
                           ></dl-item-card>

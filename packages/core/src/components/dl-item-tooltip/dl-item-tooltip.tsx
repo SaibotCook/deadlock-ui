@@ -20,6 +20,9 @@ export class DlItemTooltip {
   /** Resolved component items to display at the bottom of the tooltip. */
   @Prop() componentItemsData?: ComponentItemInfo[];
 
+  /** Resolved parent items (items this item is a component of). */
+  @Prop() parentItemsData?: ComponentItemInfo[];
+
   private renderImportantProp(key: string) {
     const item = this.itemData;
     if (!item?.properties) return null;
@@ -143,12 +146,28 @@ export class DlItemTooltip {
           {this.componentItemsData && this.componentItemsData.length > 0 && (
             <div class="component-items-section">
               <div class="component-items-label">Component:</div>
-              {this.componentItemsData.map(comp => (
-                <div class="component-item">
-                  {comp.image && <img class="component-item-icon" src={comp.image} alt="" />}
-                  <span class="component-item-name">{comp.name}</span>
-                </div>
-              ))}
+              <div class="component-items-grid">
+                {this.componentItemsData.map(comp => (
+                  <div class="component-item">
+                    {comp.image && <img class="component-item-icon" src={comp.image} alt="" />}
+                    <span class="component-item-name">{comp.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {this.parentItemsData && this.parentItemsData.length > 0 && (
+            <div class="component-items-section">
+              <div class="component-items-label">Component of:</div>
+              <div class="component-items-grid">
+                {this.parentItemsData.map(parent => (
+                  <div class="component-item">
+                    {parent.image && <img class="component-item-icon" src={parent.image} alt="" />}
+                    <span class="component-item-name">{parent.name}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
