@@ -1,6 +1,7 @@
 import { Component, Prop, Watch, h } from '@stencil/core';
 import { Language, TooltipBehavior, TooltipPlacement } from '../../types';
 import { configState } from '../../store/config-store';
+import { injectFonts } from '../../utils/fonts';
 
 @Component({
   tag: 'dl-provider',
@@ -23,6 +24,7 @@ export class DlProvider {
   @Prop({ attribute: 'show-tier-badge' }) showTierBadge: boolean = true;
 
   connectedCallback() {
+    injectFonts();
     configState.language = this.language;
     configState.tooltipBehavior = this.tooltipBehavior;
     configState.tooltipPlacement = this.tooltipPlacement;

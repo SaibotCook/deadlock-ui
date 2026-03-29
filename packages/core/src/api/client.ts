@@ -4,6 +4,28 @@ const API_BASE = 'https://assets.deadlock-api.com/v2';
 
 const cache = new Map<Language, Promise<Item[]>>();
 
+let genericDataCache: Promise<GenericData> | null = null;
+
+export interface GenericData {
+  item_price_per_tier: number[];
+}
+
+export function fetchGenericData(): Promise<GenericData> {
+  if (genericDataCache) return genericDataCache;
+
+  genericDataCache = fetch(`${API_BASE}/generic-data`)
+    .then(res => {
+      if (!res.ok) throw new Error(`Failed to load generic data: ${res.status}`);
+      return res.json();
+    })
+    .catch(err => {
+      genericDataCache = null;
+      throw err;
+    });
+
+  return genericDataCache;
+}
+
 function loadItems(language: Language): Promise<Item[]> {
   const cached = cache.get(language);
   if (cached) return cached;

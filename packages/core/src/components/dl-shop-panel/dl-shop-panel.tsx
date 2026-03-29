@@ -1,8 +1,8 @@
 import { Component, Prop, State, Watch, h } from '@stencil/core';
 import { Item, ItemSlotType } from '../../types';
-import { fetchItems } from '../../api/client';
+import { fetchItems, fetchGenericData } from '../../api/client';
 import { configState, onConfigChange } from '../../store/config-store';
-import { shopBackground, shopTabShape, shopTabIcon, shopTabEdgeOverlay } from '../../utils/assets';
+import { shopBackground, shopTabShape, shopTabIcon, shopTabEdgeOverlay, soulIcon } from '../../utils/assets';
 
 const CATEGORIES: { label: string; slot: ItemSlotType; color: string }[] = [
   { label: 'Weapon', slot: 'weapon', color: '#e4b20c' },
@@ -29,6 +29,7 @@ export class DlShopPanel {
   @State() private _items: Item[] = [];
   @State() private _loading = false;
   @State() private _activeTab: ItemSlotType = 'weapon';
+  @State() private _tierPrices: number[] = [];
 
   private _unsubLanguage?: () => void;
 
@@ -44,6 +45,7 @@ export class DlShopPanel {
       this._activeTab = this.activeTab;
     }
     this.loadItems();
+    this.loadGenericData();
     this._unsubLanguage = onConfigChange('language', () => {
       this.loadItems();
     });
@@ -65,6 +67,15 @@ export class DlShopPanel {
       this._items = [];
     } finally {
       this._loading = false;
+    }
+  }
+
+  private async loadGenericData() {
+    try {
+      const data = await fetchGenericData();
+      this._tierPrices = data.item_price_per_tier;
+    } catch {
+      this._tierPrices = [];
     }
   }
 
@@ -118,8 +129,15 @@ export class DlShopPanel {
         >
           {TIERS.map(tier => {
             const items = this.getItemsBySlotAndTier(this._activeTab, tier);
+            const price = this._tierPrices[tier];
             return (
               <div class={{ 'tier-section': true, [`tier-${tier}`]: true }}>
+                {price != null && (
+                  <div class={{ 'tier-price': true, [`tier-${tier}`]: true }}>
+                    <img class="soul-icon" src={soulIcon()} alt="" />
+                    <span>{price.toLocaleString()}</span>
+                  </div>
+                )}
                 {items.length > 0 && (
                   <div class={{ 'mods-grid': true, [`tier-${tier}`]: true }}>
                     {items.map(item => (
