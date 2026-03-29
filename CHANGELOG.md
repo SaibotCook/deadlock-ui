@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/deadlockprobr/deadlock-ui/compare/deadlock-ui-v1.0.0...deadlock-ui-v1.0.1) (2026-03-29)
+
+
+### Bug Fixes
+
+* export DlItemCardCustomEvent type from core package ([8e78825](https://github.com/deadlockprobr/deadlock-ui/commit/8e7882507d4f276ae2d22ee465b135f31816ffbe))
+
 ## [1.0.0](https://github.com/deadlockprobr/deadlock-ui/compare/deadlock-ui-v0.3.0...deadlock-ui-v1.0.0) (2026-03-29)
 
 
