@@ -1,5 +1,5 @@
 import { Component, Prop, State, Watch, Element, h } from '@stencil/core';
-import { Item, ItemSlotType } from '../../types';
+import { Item, ItemSlotType, Language } from '../../types';
 import { fetchItems, fetchGenericData } from '../../api/client';
 import { configState, onConfigChange } from '../../store/config-store';
 import { shopBackground, shopTabShape, shopTabIcon, shopTabEdgeOverlay, soulIcon } from '../../utils/assets';
@@ -32,6 +32,9 @@ export class DlShopPanel {
   /** When `true`, disables the highlight effect that dims unrelated items on hover. */
   @Prop({ reflect: true, attribute: 'disable-highlight' }) disableHighlight: boolean = false;
 
+  /** Override language for item names only. Tooltip content uses the global language. */
+  @Prop({ attribute: 'item-name-language' }) itemNameLanguage?: Language;
+
   @State() private _items: Item[] = [];
   @State() private _loading = false;
   @State() private _activeTab: ItemSlotType = 'weapon';
@@ -46,12 +49,19 @@ export class DlShopPanel {
   private _componentItemsMap = new Map<string, ComponentItemInfo[]>();
   /** Maps class_name → items that use this item as a component */
   private _parentItemsMap = new Map<string, ComponentItemInfo[]>();
+  /** Maps class_name → display name in the override language */
+  private _nameOverrides = new Map<string, string>();
 
   @Watch('activeTab')
   onActiveTabChange(value: string) {
     if (VALID_TABS.has(value)) {
       this._activeTab = value as ItemSlotType;
     }
+  }
+
+  @Watch('itemNameLanguage')
+  onItemNameLanguageChange() {
+    this.loadItems();
   }
 
   connectedCallback() {
@@ -74,9 +84,22 @@ export class DlShopPanel {
     try {
       const language = configState.language;
       const items = await fetchItems(language);
-      this._items = items
-        .filter(i => i.type === 'upgrade' && i.shopable && !i.disabled)
-        .sort((a, b) => a.name.localeCompare(b.name));
+      const filtered = items.filter(i => i.type === 'upgrade' && i.shopable && !i.disabled);
+
+      // Resolve name overrides if itemNameLanguage is set
+      this._nameOverrides.clear();
+      if (this.itemNameLanguage && this.itemNameLanguage !== language) {
+        const nameItems = await fetchItems(this.itemNameLanguage);
+        const nameMap = new Map(nameItems.map(i => [i.class_name, i.name]));
+        for (const item of filtered) {
+          const name = nameMap.get(item.class_name);
+          if (name) this._nameOverrides.set(item.class_name, name);
+        }
+      }
+
+      // Sort by display name (override or original)
+      const getName = (item: Item) => this._nameOverrides.get(item.class_name) ?? item.name;
+      this._items = filtered.sort((a, b) => getName(a).localeCompare(getName(b)));
       this.buildUpgradeChains();
     } catch {
       this._items = [];
@@ -144,6 +167,7 @@ export class DlShopPanel {
 
     // Build component items map for tooltips
     const byClassName = new Map<string, Item>(this._items.map(i => [i.class_name, i]));
+    const getDisplayName = (i: Item) => this._nameOverrides.get(i.class_name) ?? i.name;
     const componentMap = new Map<string, ComponentItemInfo[]>();
     for (const item of this._items) {
       if (item.component_items?.length) {
@@ -152,7 +176,7 @@ export class DlShopPanel {
           const comp = byClassName.get(cn);
           if (!comp) continue;
           resolved.push({
-            name: comp.name,
+            name: getDisplayName(comp),
             image: comp.shop_image_webp || comp.shop_image || comp.image_webp || comp.image || undefined,
           });
         }
@@ -171,7 +195,7 @@ export class DlShopPanel {
           if (!byClassName.has(cn)) continue;
           const list = parentItemsMap.get(cn) ?? [];
           list.push({
-            name: item.name,
+            name: getDisplayName(item),
             image: item.shop_image_webp || item.shop_image || item.image_webp || item.image || undefined,
           });
           parentItemsMap.set(cn, list);
@@ -279,6 +303,7 @@ export class DlShopPanel {
                           <dl-item-card
                             itemData={item}
                             hoverEffect={this.hoverEffect}
+                            itemNameLanguage={this.itemNameLanguage}
                             componentItemsData={this._componentItemsMap.get(item.class_name)}
                             parentItemsData={this._parentItemsMap.get(item.class_name)}
                             onTooltipOpen={this.handleTooltipOpen}

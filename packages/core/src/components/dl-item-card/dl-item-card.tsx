@@ -1,6 +1,6 @@
 import { Component, Prop, State, Watch, Element, Event, EventEmitter, h } from '@stencil/core';
 import { computePosition, flip, shift, offset, autoUpdate, Placement, VirtualElement } from '@floating-ui/dom';
-import { Item, ItemClassName } from '../../types';
+import { Item, ItemClassName, Language } from '../../types';
 import { fetchItem, fetchItems } from '../../api/client';
 import { ComponentItemInfo } from '../dl-item-tooltip/dl-item-tooltip';
 import { configState, onConfigChange } from '../../store/config-store';
@@ -36,6 +36,9 @@ export class DlItemCard {
   /** Resolved parent items (items this item is a component of). */
   @Prop() parentItemsData?: ComponentItemInfo[];
 
+  /** Override language for the item name only. Tooltip content uses the global language. */
+  @Prop({ attribute: 'item-name-language' }) itemNameLanguage?: Language;
+
   /** Emitted when the tooltip opens. Detail contains the item's `class_name`. */
   @Event({ eventName: 'tooltipOpen' }) tooltipOpen!: EventEmitter<string>;
 
@@ -47,6 +50,7 @@ export class DlItemCard {
   @State() private _loading = false;
   @State() private _error?: string;
   @State() private _open = false;
+  @State() private _nameOverride?: string;
 
   private _hoverTimeout?: ReturnType<typeof setTimeout>;
   private _mouseX = 0;
@@ -119,6 +123,7 @@ export class DlItemCard {
       this.fetchItemData();
     } else if (this.itemData) {
       this.resolveComponentItems();
+      this.resolveNameOverride();
     }
     this._unsubLanguage = onConfigChange('language', () => {
       if (this.itemKey && !this.itemData) {
@@ -142,6 +147,11 @@ export class DlItemCard {
     }
   }
 
+  @Watch('itemNameLanguage')
+  onItemNameLanguageChange() {
+    this.resolveNameOverride();
+  }
+
   private async fetchItemData() {
     const key = this.itemKey;
     if (!key) return;
@@ -150,6 +160,7 @@ export class DlItemCard {
     try {
       this._item = await fetchItem(key, configState.language);
       this.resolveComponentItems();
+      this.resolveNameOverride();
     } catch (e) {
       this._error = e instanceof Error ? e.message : 'Failed to load item';
     } finally {
@@ -164,12 +175,20 @@ export class DlItemCard {
     try {
       const allItems = await fetchItems(configState.language);
       const byClassName = new Map<string, Item>(allItems.map(i => [i.class_name, i]));
+
+      // Resolve name overrides for component items
+      let nameOverrides: Map<string, string> | undefined;
+      if (this.itemNameLanguage && this.itemNameLanguage !== configState.language) {
+        const nameItems = await fetchItems(this.itemNameLanguage);
+        nameOverrides = new Map(nameItems.map(i => [i.class_name, i.name]));
+      }
+
       const resolved: ComponentItemInfo[] = [];
       for (const cn of item.component_items) {
         const comp = byClassName.get(cn);
         if (!comp) continue;
         resolved.push({
-          name: comp.name,
+          name: nameOverrides?.get(cn) ?? comp.name,
           image: comp.shop_image_webp || comp.shop_image || comp.image_webp || comp.image || undefined,
         });
       }
@@ -177,6 +196,25 @@ export class DlItemCard {
     } catch {
       // silently fail
     }
+  }
+
+  private async resolveNameOverride() {
+    const item = this.item;
+    if (!item || !this.itemNameLanguage || this.itemNameLanguage === configState.language) {
+      this._nameOverride = undefined;
+      return;
+    }
+    try {
+      const items = await fetchItems(this.itemNameLanguage);
+      const match = items.find(i => i.class_name === item.class_name);
+      this._nameOverride = match?.name;
+    } catch {
+      // silently fail — fall back to default name
+    }
+  }
+
+  private get displayName(): string {
+    return this._nameOverride ?? this.item?.name ?? '';
   }
 
   private computeFloatingPosition(reference: Element | VirtualElement) {
@@ -370,20 +408,21 @@ export class DlItemCard {
         )}
 
         <div class="mod-icon-container">
-          {imgSrc && <img class="mod-icon" src={imgSrc} alt={item.name} loading="lazy" />}
+          {imgSrc && <img class="mod-icon" src={imgSrc} alt={this.displayName} loading="lazy" />}
         </div>
 
         {isActive && !hasImbue && <span class="active-tag">Active</span>}
         {hasImbue && <span class="imbue-tag">Imbue</span>}
 
         <div class="mod-name-container">
-          <span class={{ 'mod-name': true, [slot]: true }}>{item.name}</span>
+          <span class={{ 'mod-name': true, [slot]: true }}>{this.displayName}</span>
         </div>
       </div>,
       !noTooltip && (
         <dl-item-tooltip
           class={{ 'tooltip-wrapper': true, 'open': this._open }}
           itemData={item}
+          nameOverride={this._nameOverride}
           componentItemsData={this.componentItemsData ?? this._componentItems}
           parentItemsData={this.parentItemsData}
           onMouseEnter={this.handleMouseEnter}

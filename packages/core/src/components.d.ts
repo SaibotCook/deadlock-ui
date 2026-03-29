@@ -35,6 +35,10 @@ export namespace Components {
          */
         "itemId"?: number;
         /**
+          * Override language for the item name only. Tooltip content uses the global language.
+         */
+        "itemNameLanguage"?: Language;
+        /**
           * Resolved parent items (items this item is a component of).
          */
         "parentItemsData"?: ComponentItemInfo[];
@@ -67,6 +71,10 @@ export namespace Components {
           * Item data to display in the tooltip.
          */
         "itemData"?: Item;
+        /**
+          * Override the item name displayed in the tooltip header.
+         */
+        "nameOverride"?: string;
         /**
           * Resolved parent items (items this item is a component of).
          */
@@ -120,6 +128,10 @@ export namespace Components {
           * @default 'scale'
          */
         "hoverEffect": 'none' | 'scale';
+        /**
+          * Override language for item names only. Tooltip content uses the global language.
+         */
+        "itemNameLanguage"?: Language;
     }
 }
 export interface DlItemCardCustomEvent<T> extends CustomEvent<T> {
@@ -201,6 +213,10 @@ declare namespace LocalJSX {
          */
         "itemId"?: number;
         /**
+          * Override language for the item name only. Tooltip content uses the global language.
+         */
+        "itemNameLanguage"?: Language;
+        /**
           * Emitted when the tooltip closes. Detail contains the item's `class_name`.
          */
         "onTooltipClose"?: (event: DlItemCardCustomEvent<string>) => void;
@@ -241,6 +257,10 @@ declare namespace LocalJSX {
           * Item data to display in the tooltip.
          */
         "itemData"?: Item;
+        /**
+          * Override the item name displayed in the tooltip header.
+         */
+        "nameOverride"?: string;
         /**
           * Resolved parent items (items this item is a component of).
          */
@@ -294,6 +314,10 @@ declare namespace LocalJSX {
           * @default 'scale'
          */
         "hoverEffect"?: 'none' | 'scale';
+        /**
+          * Override language for item names only. Tooltip content uses the global language.
+         */
+        "itemNameLanguage"?: Language;
     }
 
     interface DlItemCardAttributes {
@@ -301,11 +325,15 @@ declare namespace LocalJSX {
         "itemClassName": ItemClassName;
         "hoverEffect": 'none' | 'scale';
         "showTierBadge": boolean;
+        "itemNameLanguage": Language;
     }
     interface DlItemGridAttributes {
         "slotType": ItemSlotType;
         "tier": ItemTier;
         "shopableOnly": boolean;
+    }
+    interface DlItemTooltipAttributes {
+        "nameOverride": string;
     }
     interface DlProviderAttributes {
         "language": Language;
@@ -319,12 +347,13 @@ declare namespace LocalJSX {
         "activeTab": ItemSlotType;
         "hoverEffect": 'none' | 'scale';
         "disableHighlight": boolean;
+        "itemNameLanguage": Language;
     }
 
     interface IntrinsicElements {
         "dl-item-card": Omit<DlItemCard, keyof DlItemCardAttributes> & { [K in keyof DlItemCard & keyof DlItemCardAttributes]?: DlItemCard[K] } & { [K in keyof DlItemCard & keyof DlItemCardAttributes as `attr:${K}`]?: DlItemCardAttributes[K] } & { [K in keyof DlItemCard & keyof DlItemCardAttributes as `prop:${K}`]?: DlItemCard[K] };
         "dl-item-grid": Omit<DlItemGrid, keyof DlItemGridAttributes> & { [K in keyof DlItemGrid & keyof DlItemGridAttributes]?: DlItemGrid[K] } & { [K in keyof DlItemGrid & keyof DlItemGridAttributes as `attr:${K}`]?: DlItemGridAttributes[K] } & { [K in keyof DlItemGrid & keyof DlItemGridAttributes as `prop:${K}`]?: DlItemGrid[K] };
-        "dl-item-tooltip": DlItemTooltip;
+        "dl-item-tooltip": Omit<DlItemTooltip, keyof DlItemTooltipAttributes> & { [K in keyof DlItemTooltip & keyof DlItemTooltipAttributes]?: DlItemTooltip[K] } & { [K in keyof DlItemTooltip & keyof DlItemTooltipAttributes as `attr:${K}`]?: DlItemTooltipAttributes[K] } & { [K in keyof DlItemTooltip & keyof DlItemTooltipAttributes as `prop:${K}`]?: DlItemTooltip[K] };
         "dl-provider": Omit<DlProvider, keyof DlProviderAttributes> & { [K in keyof DlProvider & keyof DlProviderAttributes]?: DlProvider[K] } & { [K in keyof DlProvider & keyof DlProviderAttributes as `attr:${K}`]?: DlProviderAttributes[K] } & { [K in keyof DlProvider & keyof DlProviderAttributes as `prop:${K}`]?: DlProvider[K] };
         "dl-shop-panel": Omit<DlShopPanel, keyof DlShopPanelAttributes> & { [K in keyof DlShopPanel & keyof DlShopPanelAttributes]?: DlShopPanel[K] } & { [K in keyof DlShopPanel & keyof DlShopPanelAttributes as `attr:${K}`]?: DlShopPanelAttributes[K] } & { [K in keyof DlShopPanel & keyof DlShopPanelAttributes as `prop:${K}`]?: DlShopPanel[K] };
     }

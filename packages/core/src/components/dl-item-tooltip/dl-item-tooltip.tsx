@@ -23,6 +23,9 @@ export class DlItemTooltip {
   /** Resolved parent items (items this item is a component of). */
   @Prop() parentItemsData?: ComponentItemInfo[];
 
+  /** Override the item name displayed in the tooltip header. */
+  @Prop() nameOverride?: string;
+
   private renderImportantProp(key: string) {
     const item = this.itemData;
     if (!item?.properties) return null;
@@ -182,7 +185,7 @@ export class DlItemTooltip {
         {/* ── Header ── */}
         <div class="header-container" style={{ backgroundImage: `url("${headerBg}")` }}>
           <div class="mod-name-container">
-            <div class="mod-name">{item.name}</div>
+            <div class="mod-name">{this.nameOverride ?? item.name}</div>
             {item.cost != null && item.cost > 0 && (
               <div class="mod-cost">
                 <img class="soul-icon" src={soulIcon()} alt="Souls" />
