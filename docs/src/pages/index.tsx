@@ -108,16 +108,25 @@ ${items.map(name => `    <DlItemCard class-name="${name}" />`).join('\n')}
           <div style={{ textAlign: 'left' }}>
             <Tabs groupId="framework" defaultValue="react">
               <TabItem value="react" label="React">
+                <CodeBlock language="bash">
+                  npm install @deadlock-api/ui-react
+                </CodeBlock>
                 <CodeBlock language="tsx">
                   {reactExample}
                 </CodeBlock>
               </TabItem>
               <TabItem value="vue" label="Vue">
+                <CodeBlock language="bash">
+                  npm install @deadlock-api/ui-vue
+                </CodeBlock>
                 <CodeBlock language="html">
                   {vueExample}
                 </CodeBlock>
               </TabItem>
               <TabItem value="vanilla" label="Web components">
+                <CodeBlock language="bash">
+                  npm install @deadlock-api/ui-core
+                </CodeBlock>
                 <CodeBlock language="html">
                   {vanillaExample}
                 </CodeBlock>
