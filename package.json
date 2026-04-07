@@ -17,6 +17,10 @@
     "start": "npm -w @deadlock-api/ui-core run start",
     "codegen": "node scripts/generate-class-names.mjs"
   },
+  "engines": {
+    "node": ">=22",
+    "npm": ">=7"
+  },
   "devDependencies": {
     "concurrently": "^9.2.1"
   }
